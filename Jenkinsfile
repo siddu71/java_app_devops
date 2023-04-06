@@ -4,14 +4,14 @@ pipeline{
     agent any 
 
     parameters{
-        choice(name: 'Action', choices: 'Create\nDestroy', description: 'Choose Create/Destroy')
+        choice(name: 'Action', choices: 'create\ndestroy', description: 'Choose Create/Destroy')
     }
 
     stages{
 
         
         stage('Git Checkout'){
-            when{ expression{ params.action == 'Create' }}
+            when{ expression{ params.action == 'create' }}
             steps{
                 script{
                     gitCheckout(
@@ -22,7 +22,7 @@ pipeline{
             }
         }
         stage('Unit Test Maven'){
-            when{ expression{ params.action == 'Create' }}
+            when{ expression{ params.action == 'create' }}
             steps{
                 script{
                     mvnTest()   
@@ -30,7 +30,7 @@ pipeline{
             }
         }
         stage('Integration test Maven'){
-            when{ expression{ params.action == 'Create' }}
+            when{ expression{ params.action == 'create' }}
             steps{
                 script{
                     mvnIntegrationTest()   
@@ -38,7 +38,7 @@ pipeline{
             }
         }
         stage('Qualitygate Static Analysis'){
-            when{ expression{ params.action == 'Create' }}
+            when{ expression{ params.action == 'create' }}
             steps{
                 script{
                     staticCodeAnalysis()   
