@@ -46,7 +46,7 @@ pipeline{
                 }
             }
         }
-         stage('Qualitygate status check'){
+        stage('Qualitygate status check'){
             when{ expression{ params.action == 'create' }}
             steps{
                 script{
@@ -59,7 +59,7 @@ pipeline{
             when{ expression{ params.action == 'create' }}
             steps{
                 script{
-                    mvnBuild()  
+                    mnvBuild()  
                 }
             }
         }
