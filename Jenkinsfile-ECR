@@ -5,9 +5,9 @@ pipeline{
 
     parameters{
          choice(name: 'action', choices: 'create\ndelete', description: 'Choose create/Destroy')
-         string(name: 'ImageName', description:'Name of docker build', defaultValue: 'javaapp')
-         string(name: 'ImageTag', description:'Tag of Docker build', defaultValue: 'v1')
-         string(name: 'Hubuser', description:'DockerHub UserName', defaultValue: 'siddarth71')
+         string(name: 'aws_account_id', description:'Name of Account id', defaultValue: '834920522358')
+         string(name: 'region', description:'AWS region', defaultValue: 'us-east-1')
+         string(name: 'ecr_reponame', description:'Name of ECR repo', defaultValue: 'siddarth71')
     }
 
     stages{
@@ -63,6 +63,31 @@ pipeline{
             steps{
                 script{
                     mvnBuild()  
+                }
+            }
+        }
+        stage('Docker Image Build'){
+            when{ expression{ params.action == 'create' }}
+            steps{
+                script{
+                    DockerbuildECR("${params.aws_account_id}","${params.region}","${params.ecr_reponame}")
+                
+                }
+            }
+        }
+        stage('Docker Image scan :trivy'){
+            when{ expression{ params.action == 'create' }}
+            steps{
+                script{
+                    DockerImageScanECR("${params.aws_account_id}","${params.region}","${params.ecr_reponame}")
+                }
+            }
+        }
+        stage('Docker Image push :ECR'){
+            when{ expression{ params.action == 'create' }}
+            steps{
+                script{
+                    DockerPushECR("${params.aws_account_id}","${params.region}","${params.ecr_reponame}")
                 }
             }
         }
